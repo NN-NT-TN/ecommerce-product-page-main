@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  
+  <title>Frontend Mentor | E-commerce product page</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <script src="https://unpkg.com/vue@3.0.0-beta.12/dist/vue.global.js"></script>
+</head>
+<body >
+  <div id="app">
+   
+  <nav>
+    <div class="navigation">
+      <div class="mobile-button">
+        <div onclick="OpenNavMenu()"><img src="images/icon-menu.svg" alt=""></div>
+      </div>
+      
+      <div class="logo">
+        <a  href="#"><img src="images/logo.svg" alt="" srcset=""></a>
+      </div>
+      
+    
+    <div class="menu">
+      <a href="#">Collections</a>
+      <a href="#"> Men</a>
+      <a href="#"> Women</a>
+      <a href="#"> About</a>
+      <a href="#"> Contact</a>
+    </div>
+    
+    <div class="cart-nav" onclick="ControlForm()">
+      <span class="cart-amount">{{ ShowCartAmount()}}</span>
+      <img src="images/icon-cart.svg" alt="" srcset="">
+    
+    </div>
+    <div class="avatar">
+
+      <a class="circle-hover" href="#avatar">
+        
+        <img id="avatar" class="fit-content center-pos" src="images/image-avatar.png" alt="" srcset="">
+      </a>
+    </div>
+  </div>
+
+  <div class="cart-popup" id="cart-popup">
+    <table class="cart-popup-content" cellspacing="0" cellpadding="0">
+      <tr>
+        <th>Cart</th>
+      </tr>
+
+      <tr>
+        <td v-if="cart.length<= 0" class="empty-cart-note">
+          <div class="font-weight-700">
+            Your cart is empty.
+          </div> 
+          
+        </td>  
+        <td class="cart-popup-item"  v-for="cartItem in cart" :key="cartItem.id">
+          <div><img :src="cartItem.image"></div>
+          <div>
+            <div>{{cartItem.name}}</div>
+            <div>{{formatPrice(cartItem.price)}} x {{cartItem.amount}} 
+              <span class="font-weight-700">{{formatPrice(cartItem.price*cartItem.amount)}}</span></div>
+          </div>
+          <div><img class="cursor-pointer" @click="removeFromCart(cartItem.id)" src="images/icon-delete.svg" alt="delete button"></div>
+        </td>
+      </tr>
+      <tr>
+
+        <td v-if="cart.length > 0">
+          <div class="center">
+            <a class="oragne-button" href="#">Checkout</a>
+          </div>
+          
+        </td>  
+      </tr>
+    </table>
+  </div>
+  </nav>
+  <div id="menu-mobile" class="black-bg menu-mobile">
+    <div class="menu-mobile-container">
+      <div onclick="CloseNavMenu()"><img src="images/icon-close.svg" alt=""></div>
+      <a href="#">Collections</a>
+      <a href="#"> Men</a>
+      <a href="#"> Women</a>
+      <a href="#"> About</a>
+      <a href="#"> Contact</a>
+    </div>
+  </div>
+  <main>
+    <div class="product-container">
+      <div class="product-img-container" onclick="OpenCarouselMenu()">
+        <div  @click=" prevImage()" class="circle inner-left"><svg width="12" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M11 1 3 9l8 8" stroke="currentColor" stroke-width="3" fill="none" fill-rule="evenodd"/></svg></div>
+        <img v-bind:src="image">
+        <div  @click=" nextImage()" class="circle inner-right"  href=""><svg width="13" height="18" xmlns="http://www.w3.org/2000/svg"><path d="m2 1 8 8-8 8" stroke="currentColor" stroke-width="3" fill="none" fill-rule="evenodd"/></svg></div>
+      </div>
+      <div class="dl-none carousel-container" >
+        <a :class="{ active: variant.active}"  v-for="variant in variants" 
+        :key="variant.id" @click="updateImage(variant.image)"><img :src="variant.thumbnail"></a>
+        
+        <!-- <a><img src="images/image-product-1-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-2-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-3-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-4-thumbnail.jpg" alt=""></a> -->
+      </div>
+    </div>
+    
+    <div class="product-detail center">
+      <div class="product-detail-container ">
+        <div class="orange-text font-weight-700 small-font">SNEAKER COMPANY</div>
+        <h1 class="product-name font-weight-700">{{product}}</h1>
+        
+        <p>
+          {{description}}
+        </p>
+        <div class="prices-container">
+            <div class="price-amount">
+              <div class=" font-weight-700">{{displayDisCountPrice()}}</div>
+              <div class=" font-weight-700"> {{discount+'%'}}</div>
+            </div>
+            <div class="price-reduced font-weight-700"> {{formatPrice(price)}}</div>
+        </div>
+        <div class="cart-option-container">
+          <div class="number-input">
+            <span  class="font-weight-700" >
+              <img  @click="addAmount()" src="images/icon-plus.svg" alt="+">
+            </span>
+            <span class="font-weight-700">
+              {{ count }}
+            </span>
+            <span @click="subtractAmount()" class="font-weight-700">
+              <img src="images/icon-minus.svg" alt="-">
+            </span>
+          </div>
+          <a class="add-to-cart-btn font-weight-700 cursor-pointer" @click="addToCart()">
+              <svg width="22" height="20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.925 3.641H3.863L3.61.816A.896.896 0 0 0 2.717 0H.897a.896.896 0 1 0 0 1.792h1l1.031 11.483c.073.828.52 1.726 1.291 2.336C2.83 17.385 4.099 20 6.359 20c1.875 0 3.197-1.87 2.554-3.642h4.905c-.642 1.77.677 3.642 2.555 3.642a2.72 2.72 0 0 0 2.717-2.717 2.72 2.72 0 0 0-2.717-2.717H6.365c-.681 0-1.274-.41-1.53-1.009l14.321-.842a.896.896 0 0 0 .817-.677l1.821-7.283a.897.897 0 0 0-.87-1.114ZM6.358 18.208a.926.926 0 0 1 0-1.85.926.926 0 0 1 0 1.85Zm10.015 0a.926.926 0 0 1 0-1.85.926.926 0 0 1 0 1.85Zm2.021-7.243-13.8.81-.57-6.341h15.753l-1.383 5.53Z" fill="hsl(0, 0%, 100%)" fill-rule="nonzero"/>
+              </svg>
+             Add to cart</a>
+ 
+        </div>
+      </div> 
+    </div>    
+  </main>
+  <div id="carousel-mobile" class="black-bg carousel-menu ">
+    <div class="carousel-menu-container" >
+      <div class="close-icon" onclick="CloseCarouselMenu()"><svg  width="14" height="15" xmlns="http://www.w3.org/2000/svg"><path d="m11.596.782 2.122 2.122L9.12 7.499l4.597 4.597-2.122 2.122L7 9.62l-4.595 4.597-2.122-2.122L4.878 7.5.282 2.904 2.404.782l4.595 4.596L11.596.782Z" fill="currentColor" fill-rule="evenodd"/></svg></div>
+      <div class="carousel-images-pick-container">
+        <div><div @click=" prevImage()" class="circle left"><svg width="12" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M11 1 3 9l8 8" stroke="currentColor" stroke-width="3" fill="none" fill-rule="evenodd"/></svg></div></div>
+        <img v-bind:src="image">
+        <div ><div @click=" nextImage()" class="circle right"  href=""><svg width="13" height="18" xmlns="http://www.w3.org/2000/svg"><path d="m2 1 8 8-8 8" stroke="currentColor" stroke-width="3" fill="none" fill-rule="evenodd"/></svg></div></div>
+      </div>
+      <div class="carousel-container">
+        <a :class="{ active: variant.active}" v-for="variant in variants" :key="variant.id"  @click="updateImage(variant.image)"><img :src="variant.thumbnail"></a>
+
+        <!-- <a><img src="images/image-product-1-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-2-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-3-thumbnail.jpg" alt=""></a>
+        <a><img src="images/image-product-4-thumbnail.jpg" alt=""></a> -->
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="./script.js"></script>
+  <script src="./Vue-script.js"></script>
+</body>
+</html>
