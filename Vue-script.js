@@ -51,7 +51,8 @@ const App   = Vue.createApp({
            
             var item = this.cart.find(v=>v.name===this.product);
             if(!item){
-                this.cart.push({ name:this.product, amount:this.count, price:this.price, image:this.image});
+                this.cart.push({ name:this.product, amount:this.count, price:this.price, 
+                    image:this.variants[0].image});
                 return;
             }
             item.amount+=this.count;
