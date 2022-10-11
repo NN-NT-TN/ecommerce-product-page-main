@@ -88,15 +88,6 @@ const App   = Vue.createApp({
             this.variants.find(e=>e.image===variantImage).active=true;
             this.ChangeActive( this.variants, variantImage);
         },
-        Test1(id)
-        {
-           return id;
-        },
-        Test2()
-        {
-            var item = this.variants.find(v=>v.active===true)
-            console.log(item);
-        },
         updateImage2(variantImage) {
             this.image2 = variantImage
         },
@@ -138,10 +129,10 @@ const App   = Vue.createApp({
             this.count++;
          },
         subtractAmount(){
-            if (this.count>=0) {
-                this.count--;
+            if (this.count<=0) {
+               return;
             }
-            
+            this.count--;
         }
     }
 }).mount('#app')
